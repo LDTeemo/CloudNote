@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="cn.tedu.note.dao.NoteBookDao">
+
+	<!-- 查 -->
+	<select id="findNoteBookByUserId" resultType="java.util.Map" parameterType="String">
+		Select 
+			cn_notebook_id as bookId,
+			cn_notebook_name as notebookName
+		from
+			cn_notebook
+		where
+			cn_user_id=#{userId}		
+	</select>
+</mapper>
+

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="cn.tedu.blog.dao.PostDao">
+<!-- 
+自定义映射规则 
+Mybatis的Resultmap可以支持复杂的关联关系运算：
+-映射管理关系
+-集合映射，小心内存溢出的问题
+-->
+	<resultMap type="cn.tedu.blog.entity.Post" id="postResultMap">
+		<result property="id" column="p_id"/>
+		<result property="body" column="p_body"/>
+		<!-- 关联，用于映射外键 p_user_id-->	
+		<association property="user" column="p_user_id" javaType="cn.tedu.blog.entity.User">
+			<id property="id" column="u_id"/>
+			<result property="name" column="name"/>
+			<result property="password" column="password"/>
+		</association>
+		
+		<!-- 集合映射 ofType用于定义集合中装的小元素是什么类型-->
+		<collection property="comments" javaType="java.util.ArrayList" 
+		ofType="cn.tedu.blog.entity.Comment" column="p_id" select="selectComment">
+			
+		</collection>
+		
+	</resultMap>
+
+	<select id="findPostById" parameterType="string" resultMap="postResultMap">
+		select 
+			p.p_id,
+			p.p_body,
+			p.p_user_id,
+			u.u_id,
+			u.u_name as name,
+			u.u_password as password
+		from 
+			blog_post p
+		left outer join
+			blog_user u
+		on
+			p.p_user_id=u.u_id
+		where
+			p.p_id=#{id}			
+	</select>
+	
+	<select id="selectComment" resultType="cn.tedu.blog.entity.Comment">
+		select
+			c_id as id,
+			c_body as body
+		from
+			blog_comment
+		where	
+			c_id=#{p_id}
+		
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>
+

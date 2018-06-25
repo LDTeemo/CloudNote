@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="cn.tedu.note.dao.NoteDao">
+	<select id="getNotes" parameterType="String" resultType="java.util.Map">
+		select
+			cn_note_id as noteId,
+			cn_note_title as noteTitle
+		from
+			cn_note
+		where
+			cn_notebook_id=#{nid}
+		and	
+			cn_note_type_id='1'
+		order by
+			cn_note_last_modify_time desc			
+	</select> 
+	<select id="queryContent" parameterType="String" resultType="cn.tedu.note.entity.Note">
+		select
+			cn_note_id as noteId,
+			cn_notebook_id as noteBookId,
+			cn_user_id as userId,
+			cn_note_status_id as noteStatusId,
+			cn_note_type_id as noteTypeId,
+			cn_note_title as noteTitle,
+			cn_note_body as noteBody,
+			cn_note_create_time as noteCreatTime,
+			cn_note_last_modify_time as lastModifyTime
+		from cn_note
+		where cn_note_id=#{noteId}
+	</select>
+<!-- 修改日志内容、标题、最后一次修改时间 -->
+	<update id="modifyNote" parameterType="cn.tedu.note.entity.Note" >
+		update 
+			cn_note 
+		set 
+			cn_note_title=#{noteTitle},
+			cn_note_body=#{noteBody},
+			cn_note_last_modify_time=#{lastModifyTime}
+		where 	
+			cn_note_id=#{noteId}
+	</update>
+	
+<!-- 修改全部 -->
+	<update id="updateNote" parameterType="cn.tedu.note.entity.Note">
+		update
+			cn_note
+		set
+			cn_note_id=#{noteId},
+			cn_notebook_id=#{noteBookId},
+			cn_user_id=#{userId},
+			cn_note_status_id=#{noteStatusId},
+			cn_note_type_id=#{noteTypeId},
+			cn_note_title=#{noteTitle},
+			cn_note_body=#{noteBody},
+			cn_note_create_time=#{noteCreatTime},
+			cn_note_last_modify_time=#{lastModifyTime}
+		where
+			cn_note_id=#{noteId}
+	</update>
+	
+<!-- 增 -->
+	<insert id="addNote" parameterType="cn.tedu.note.entity.Note">
+		insert into
+			cn_note
+				(
+				cn_note_id,
+				cn_notebook_id,
+				cn_user_id,
+				cn_note_status_id,
+				cn_note_type_id,
+				cn_note_title,
+				cn_note_body,
+				cn_note_create_time,
+				cn_note_last_modify_time
+				)
+		values
+				(
+				#{noteId},
+				#{noteBookId},
+				#{userId},
+				#{noteStatusId},
+				#{noteTypeId},
+				#{noteTitle},
+				#{noteBody},
+				#{noteCreatTime},
+				#{lastModifyTime}
+				)
+	</insert>
+	
+<!-- 删 "noteBookId":currentNoteBook.bookId,
+				"userId":getCookie("userId"),
+				"noteTitle":noteTitile-->
+		<delete id="removeNote" parameterType="String">
+			delete from 
+				cn_note
+			where
+				cn_note_id=#{noteId}	
+		</delete>
+<!-- 批量删除，即批量将type设置成2，传递的参数时一个数组 -->	
+	<update id="updateNoteDelType">
+		update 
+			cn_note
+		set
+			cn_note_type_id="2"	
+		where	
+			cn_note_id 
+		in
+			<foreach collection="array" item="id" open="(" separator="," close=")">#{id}</foreach>	
+	</update>
+<!-- List作为参数动态拼接sql语句 -->
+	<select id="countNormalNote" resultType="int">
+		select 
+			count(*)
+		as
+			num	
+		from
+			cn_note
+		where
+		 	cn_note_type_id='1'
+		and
+			cn_note_id
+		in
+		<foreach collection="list" item="id" open="(" separator="," close=")">#{id}</foreach>	 			
+	</select>
+<!-- 以Map作为参数 -->
+	<update id="updateNotes" parameterType="map">
+		update
+			cn_note
+		<set>
+			<if test="noteTypeId!=null">
+				cn_note_type_id=#{noteTypeId},
+			</if>
+			<if test="lastModifyTime!=null">
+				cn_note_last_modify_time=#{lastModifyTime}
+			</if>
+		</set>
+		where
+			cn_note_id 
+		in
+		<foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>		
+	</update>
+<!--  -->
+	<select id="countNotes" parameterType="map">
+		select 
+			count(*) 
+		as 
+			c 
+		from 
+			cn_note 
+		<where>
+		<trim suffixOverrides="and">
+			<if test="noteTypeId!=null">
+				cn_note_type_id=#{noteTypeId} and
+			</if>
+			<choose>
+				<when test="lastModifyTime!=null">
+					cn_note_last_modify_time=#{lastModifyTime} and
+				</when>
+				<when test="modifyTimeBegin!=null and modifyTimeEnd!=null">
+					cn_note_last_modify_time between #{modifyTimeBegin} and #{modifyTimeEnd} and
+				</when>
+				<when test="modifyTimeBegin!=null">
+					cn_note_last_modify_time &gt; modifyTimeBegin
+				</when>
+				<when test="modifyTimeEnd!=null">
+					cn_note_last_modify_time &lt; modifyTimeEnd
+				</when>
+			</choose>
+			<if test="ids!=null">
+				<foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
+			</if>
+			</trim>
+		</where>
+	</select>
+<!-- 批量删除 -->	
+	<delete id="deleteNotes">
+		delete from
+			cn_note
+		where 
+			cn_note_id
+		in
+		<foreach collection="array" item="id" open="(" separator="," close=")">#{id}</foreach>	
+	</delete>
+	
+	<!--关键词模糊查询  -->
+	<select id="findAllByKeys" parameterType="map" resultType="map">
+		select 
+			cn_note_id as noteId,
+			cn_note_title as noteTitle
+		from
+			cn_note
+		<where>
+			<if test="noteTypeId!=null">
+				cn_note_type_id=#{noteTypeId} and
+			</if>
+				
+				<trim suffixOverrides="or">
+				<if test="noteTitle!=null">
+					(cn_note_title like #{noteTitle} or
+				</if>
+				<if test="noteBody!=null">
+					cn_note_body like #{noteBody})
+				</if>
+				</trim>
+			
+		</where>	
+		<if test="start!=null">
+			limit #{start},#{length}
+		</if>	
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>
+
