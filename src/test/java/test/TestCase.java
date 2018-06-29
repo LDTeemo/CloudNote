@@ -1,22 +1,5 @@
 package test;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.apache.commons.codec.binary.Hex;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import cn.tedu.blog.dao.PostDao;
 import cn.tedu.blog.entity.Post;
 import cn.tedu.note.dao.NoteBookDao;
@@ -29,6 +12,17 @@ import cn.tedu.note.service.NoteBookService;
 import cn.tedu.note.service.NoteService;
 import cn.tedu.note.service.UserService;
 import cn.tedu.note.util.MD5;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 public class TestCase {
 	private ApplicationContext ac;
@@ -44,8 +38,8 @@ public class TestCase {
 		notebookDao=ac.getBean("noteBookDao",NoteBookDao.class);
 	}
 	/**
-	 * ²âÊÔmybatisÅäÖÃÊÇ·ñÅä±¸Íê±Ï
-	 * ²âÊÔMapperScanner
+	 * æµ‹è¯•mybatisé…ç½®æ˜¯å¦é…å¤‡å®Œæ¯•
+	 * æµ‹è¯•MapperScanner
 	 */
 	@Test
 	public void test1(){
@@ -53,11 +47,11 @@ public class TestCase {
 		System.out.println(obj);
 	}
 	/**
-	 * ²âÊÔUserDAOµÄsave·½·¨
+	 * æµ‹è¯•UserDAOçš„saveæ–¹æ³•
 	 */
 	@Test
 	public void test2(){
-		
+
 		User u=new User();
 		String id=UUID.randomUUID().toString();
 		System.out.println(id);
@@ -69,7 +63,7 @@ public class TestCase {
 		dao.saveUser(u);
 	}
 	/**
-	 * ²âÊÔFindByName()
+	 * æµ‹è¯•FindByName()
 	 */
 	@Test
 	public void test3(){
@@ -77,7 +71,7 @@ public class TestCase {
 		System.out.println(u);
 	}
 	/**
-	 * ²âÊÔ²éÑ¯ËùÓĞ
+	 * æµ‹è¯•æŸ¥è¯¢æ‰€æœ‰
 	 */
 	@Test
 	public void testFindAll(){
@@ -86,9 +80,9 @@ public class TestCase {
 			System.out.println(user);
 		}
 	}
-	
+
 	/**
-	 * ²âÊÔÉ¾³ı
+	 * æµ‹è¯•åˆ é™¤
 	 */
 	@Test
 	public void testDeleteOne(){
@@ -98,9 +92,9 @@ public class TestCase {
 			System.out.println(user);
 		}
 	}
-	
+
 	/**
-	 * ²âÊÔĞŞ¸Ä
+	 * æµ‹è¯•ä¿®æ”¹
 	 */
 	@Test
 	public void testModify(){
@@ -111,11 +105,11 @@ public class TestCase {
 		u=dao.findByName("lix");
 		System.out.println(u);
 	}
-	
+
 	/**
-	 * ²âÊÔÒµÎñ²ãÊÇ·ñ
+	 * æµ‹è¯•ä¸šåŠ¡å±‚æ˜¯å¦
 	 */
-	@Test 
+	@Test
 	public void testUserService(){
 		String name="lix";
 		String pwd="456";
@@ -124,30 +118,30 @@ public class TestCase {
 		System.out.println(user);
 	}
 	/**
-	 * ËùÓĞµÄÃÜÂë¶¼²»ÄÜÃ÷ÎÄ±£´æ£¬ÀûÓÃÕªÒªËã·¨¶ÔÃÜÂëÈ¡µÃÆäÕªÒª
-	 * MessageDigest·â×°ÁË¸´ÔÓµÄÏûÏ¢ÕªÒªËã·¨
-	 * ²ÎÊı¡°MD5¡±ÕªÒªËã·¨µÄ°æ±¾ºÅ
+	 * æ‰€æœ‰çš„å¯†ç éƒ½ä¸èƒ½æ˜æ–‡ä¿å­˜ï¼Œåˆ©ç”¨æ‘˜è¦ç®—æ³•å¯¹å¯†ç å–å¾—å…¶æ‘˜è¦
+	 * MessageDigestå°è£…äº†å¤æ‚çš„æ¶ˆæ¯æ‘˜è¦ç®—æ³•
+	 * å‚æ•°â€œMD5â€æ‘˜è¦ç®—æ³•çš„ç‰ˆæœ¬å·
 	 */
 	@Test
 	public void testMd(){
 		try {
 			MessageDigest md=MessageDigest.getInstance("MD5");
-			//md.update(Êı¾İ);Ìá½»Êı¾İ¿ÉÒÔ¶à´Îµ÷ÓÃ£¬¶à´Îµ÷ÓÃ¾ÍÊÇ¶ÔÒ»¶ÑÊı¾İ½øĞĞÕªÒª
-			//´óÊı¾İ´¦Àí£ºmd.update(0-99¸ö×Ö½Ú),md.update(100-199¸ö×Ö½Ú),byte[] ÕªÒª=md.digest();
-			//ÃÜÂë´¦Àí£ºÕªÒª=md.digest(Êı¾İ)
+			//md.update(æ•°æ®);æäº¤æ•°æ®å¯ä»¥å¤šæ¬¡è°ƒç”¨ï¼Œå¤šæ¬¡è°ƒç”¨å°±æ˜¯å¯¹ä¸€å †æ•°æ®è¿›è¡Œæ‘˜è¦
+			//å¤§æ•°æ®å¤„ç†ï¼šmd.update(0-99ä¸ªå­—èŠ‚),md.update(100-199ä¸ªå­—èŠ‚),byte[] æ‘˜è¦=md.digest();
+			//å¯†ç å¤„ç†ï¼šæ‘˜è¦=md.digest(æ•°æ®)
 			String pwd="123456";
 			byte[] data=pwd.getBytes("utf-8");
 			byte[] md5=md.digest(data);
-			
+
 			/*
-			 * Ö±½ÓÏÔÊ¾byteÂé·³£¬²»Ò×ÔÄ¶Á£¬Ê¹ÓÃcommons-codecAPIµÄHex.encodeHexString()
-			 * ½«byte×éÊıµÄÃ¿Ò»¸öÔªËØ×ª»»Îª16½øÖÆ
+			 * ç›´æ¥æ˜¾ç¤ºbyteéº»çƒ¦ï¼Œä¸æ˜“é˜…è¯»ï¼Œä½¿ç”¨commons-codecAPIçš„Hex.encodeHexString()
+			 * å°†byteç»„æ•°çš„æ¯ä¸€ä¸ªå…ƒç´ è½¬æ¢ä¸º16è¿›åˆ¶
 			 */
 			String hex=Hex.encodeHexString(md5);
 			System.out.println(hex);
 			/*
 			 * Base64
-			 * ½«¶ş½øÖÆµÄÊı×é´æµÄÊı¾İ×ª»»ÎªÎÄ±¾¸ñÊ½
+			 * å°†äºŒè¿›åˆ¶çš„æ•°ç»„å­˜çš„æ•°æ®è½¬æ¢ä¸ºæ–‡æœ¬æ ¼å¼
 			 */
 			String base64=Base64.encodeBase64String(md5);
 			System.out.println(base64);
@@ -161,20 +155,20 @@ public class TestCase {
 	}
 	@Test
 	public void test4(){
-		
+
 		try {
 			MessageDigest md=MessageDigest.getInstance("MD5");
 			String pwd="abc123efg";
 			byte[]data=pwd.getBytes();
 			byte[] md5=md.digest(data);
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@Test
 	public void test5(){
 		String data=MD5.md5("123456");
@@ -210,21 +204,21 @@ public class TestCase {
 	public void testRegist(){
 		String name="caocao2";
 		String password="caocao123";
-		String nick="²Ü²Ù²Ü²Ù";
+		String nick="æ›¹æ“æ›¹æ“";
 		User user=userService.regist(name, password, nick);
 		System.out.println(user);
 	}
 	/**
-	 * ²âÊÔ²éÑ¯±Ê¼Ç±¾--³Ö¾Ã²ã
+	 * æµ‹è¯•æŸ¥è¯¢ç¬”è®°æœ¬--æŒä¹…å±‚
 	 */
 	@Test
 	public void testFindNoteBookByUserId(){
-		
+
 		User u=dao.findById("39295a3d-cc9b-42b4-b206-a2e7fab7e77c");
 		System.out.println(u.getName());
 	}
 	/**
-	 * ²âÊÔ²éÑ¯±Ê¼Ç±¾--ÒµÎñ²ã
+	 * æµ‹è¯•æŸ¥è¯¢ç¬”è®°æœ¬--ä¸šåŠ¡å±‚
 	 */
 	@Test
 	public void testFindNoteBookByUserIdService(){
@@ -242,7 +236,7 @@ public class TestCase {
 		User u=dao.findByName("zhoujia");
 		String pwd="123";
 		pwd=MD5.saltMd5(pwd);
-		
+
 		u.setPassword(pwd);
 		u.setNick("Teemo");
 		dao.modify(u);
@@ -250,8 +244,8 @@ public class TestCase {
 		System.out.println(u);
 	}
 	/**
-	 * ²éÑ¯¸÷±Ê¼ÇµÄÒµÎñ
-	 * ²âÊÔÒµÎñ²ãºÍ³Ö¾Ã²ã
+	 * æŸ¥è¯¢å„ç¬”è®°çš„ä¸šåŠ¡
+	 * æµ‹è¯•ä¸šåŠ¡å±‚å’ŒæŒä¹…å±‚
 	 */
 	@Test
 	public void testFindNote(){
@@ -261,7 +255,7 @@ public class TestCase {
 		for (Map<String, Object> map : list) {
 			System.out.println(map);
 		}
-		
+
 	}
 	@Test
 	public void testgetNote(){
@@ -272,74 +266,74 @@ public class TestCase {
 		}
 	}
 	/*
-	 * ²éÑ¯±Ê¼ÇÄÚÈİ
-	 * ³Ö¾Ã²ã
+	 * æŸ¥è¯¢ç¬”è®°å†…å®¹
+	 * æŒä¹…å±‚
 	 */
 	@Test
 	public void testQueryContent(){
 		NoteDao dao=ac.getBean("noteDao",NoteDao.class);
 		Note note=dao.queryContent("b5fc7da0-b5e8-4792-8f1f-9fd4b347a64f");
 		System.out.println(note);
-		
+
 	}
 	/*
-	 * ²éÑ¯±Ê¼ÇÄÚÈİ
-	 * ÒµÎñ²ã
+	 * æŸ¥è¯¢ç¬”è®°å†…å®¹
+	 * ä¸šåŠ¡å±‚
 	 */
 	@Test
 	public void testQueryContent2(){
 		NoteService ns=ac.getBean("noteService",NoteService.class);
 		Note note=ns.getNoteContent("b5fc7da0-b5e8-4792-8f1f-9fd4b347a64f");
 		System.out.println(note);
-		
+
 	}
 	/*
-	 * ²âÊÔĞŞ¸Ä±Ê¼Ç
-	 * ³Ö¾Ã²ã
+	 * æµ‹è¯•ä¿®æ”¹ç¬”è®°
+	 * æŒä¹…å±‚
 	 */
 	@Test
 	public void testModifyNote(){
 		NoteDao dao=ac.getBean("noteDao",NoteDao.class);
 		Note note=dao.queryContent("b5fc7da0-b5e8-4792-8f1f-9fd4b347a64f");
-		System.out.println("¾É±Ê¼Ç"+note);
-		note.setNoteTitle("ÕâÊÇĞÂ±Ê¼Ç");
-		note.setNoteBody("ĞÄ±ÈĞÄ»úĞÂ±Ê¼ÇÁîºü³åÁîºü³å");
+		System.out.println("æ—§ç¬”è®°"+note);
+		note.setNoteTitle("è¿™æ˜¯æ–°ç¬”è®°");
+		note.setNoteBody("å¿ƒæ¯”å¿ƒæœºæ–°ç¬”è®°ä»¤ç‹å†²ä»¤ç‹å†²");
 		Date date=new Date();
 		Long lastModifyTime=date.getTime();
 		note.setLastModifyTime(lastModifyTime);
-		//ÕıÊ½µ÷ÓÃdao.µÄ¸üĞÂ±Ê¼Ç·½·¨
+		//æ­£å¼è°ƒç”¨dao.çš„æ›´æ–°ç¬”è®°æ–¹æ³•
 		dao.modifyNote(note);
-		//ÏÔÊ¾¸Ã±Ê¼Ç
+		//æ˜¾ç¤ºè¯¥ç¬”è®°
 		note=dao.queryContent("b5fc7da0-b5e8-4792-8f1f-9fd4b347a64f");
-		System.out.println("ĞÂ±Ê¼Ç"+note);
+		System.out.println("æ–°ç¬”è®°"+note);
 	}
 	/*
-	 * ²âÊÔĞŞ¸Ä±Ê¼Ç
-	 * ÒµÎñ²ã²ã
+	 * æµ‹è¯•ä¿®æ”¹ç¬”è®°
+	 * ä¸šåŠ¡å±‚å±‚
 	 */
 	@Test
 	public void testModifyNote2(){
 		NoteService ns=ac.getBean("noteService",NoteService.class);
-		ns.modifyNoteGo("b5fc7da0-b5e8-4792-8f1f-9fd4b347a64f", "ÒµÎñ²ãĞŞ¸Ä", "ÒµÎñ²ãĞŞ¸ÄµÄÁîºü³å");
+		ns.modifyNoteGo("b5fc7da0-b5e8-4792-8f1f-9fd4b347a64f", "ä¸šåŠ¡å±‚ä¿®æ”¹", "ä¸šåŠ¡å±‚ä¿®æ”¹çš„ä»¤ç‹å†²");
 		Note note=ns.getNoteContent("b5fc7da0-b5e8-4792-8f1f-9fd4b347a64f");
 		System.out.println(note);
 	}
 	/*
-	 * Ôö¼ÓÒ»¸ö±Ê¼Ç
+	 * å¢åŠ ä¸€ä¸ªç¬”è®°
 	 */
 	@Test
 	public void testAddNote(){
 		NoteDao dao=ac.getBean("noteDao",NoteDao.class);
 		Note note=new Note();
 		note=dao.queryContent("d3ded3ca-4e79-48fd-a501-ea4df79936c1");
-		System.out.println("¾É±Ê¼Ç"+note);
-		
+		System.out.println("æ—§ç¬”è®°"+note);
+
 		String id=UUID.randomUUID().toString();
 		//System.out.println(id);
 		note.setNoteId(id);
 		note.setNoteBookId("0b11444a-a6d6-45ff-8d46-282afaa6a655");
-		note.setNoteTitle("´ó·Ñ");
-		note.setNoteBody("OPPOÅ¶Å¶ÆÆÆ¤IE¾Í°®¿´");
+		note.setNoteTitle("å¤§è´¹");
+		note.setNoteBody("OPPOå“¦å“¦ç ´çš®IEå°±çˆ±çœ‹");
 		note.setNoteCreatTime(System.currentTimeMillis());
 		note.setLastModifyTime(note.getNoteCreatTime());
 		//note.set
@@ -347,8 +341,8 @@ public class TestCase {
 		Note note1=new Note();
 		note1=dao.queryContent(id);
 		System.out.println("xin:"+note1);
-				
-		
+
+
 	}
 	@Test
 	public void testModifyNoteAllItems(){
@@ -356,7 +350,7 @@ public class TestCase {
 		Note note=dao.queryContent("b5fc7da0-b5e8-4792-8f1f-9fd4b347a64f");
 		note.setNoteCreatTime(new Date().getTime());
 		dao.updateNote(note);
-		
+
 	}
 	@Test
 	public void testDeleteNote(){
@@ -399,7 +393,7 @@ public class TestCase {
 				"01c74a5b-24b8-4716-9c99-e23324d9df09",
 				"01da5d69-89d5-4140-9585-b559a97f9cb0",
 				"046b0110-67f9-48c3-bef3-b0b23bda9d4e"};
-		
+
 		Map<String,Object> map=new HashMap<String, Object>();
 		map.put("noteTypeId", "1");
 		map.put("lastModifyTime", System.currentTimeMillis());
@@ -412,15 +406,15 @@ public class TestCase {
 		noteDao.deleteNotes("003ec2a1-f975-4322-8e4d-dfd206d6ac0c","019cd9e1-b629-4d8d-afd7-2aa9e2d6afe0");
 	}
 	/*
-	 * Ä£ºı²éÑ¯
-	 * 
+	 * æ¨¡ç³ŠæŸ¥è¯¢
+	 *
 	 */
 	@Test
 	public void testFindByKes(){
 		NoteDao noteDao=ac.getBean("noteDao",NoteDao.class);
 		Map<String, Object> keys=new HashMap<String, Object>();
-		//keys.put("noteTitle", "%ĞÂÔö%");
-		//keys.put("noteTitle", "%ĞÂÔö%");
+		//keys.put("noteTitle", "%æ–°å¢%");
+		//keys.put("noteTitle", "%æ–°å¢%");
 		keys.put("start", 10);
 		keys.put("length", 10);
 		List<Map<String,Object>> list=noteDao.findAllByKeys(keys);
@@ -437,7 +431,7 @@ public class TestCase {
 		}
 	}
 	/*
-	 * ÓÃÓÚ²âÊÔ¹ØÁª²éÑ¯£¨²éÑ¯Á½¸ö±í£©
+	 * ç”¨äºæµ‹è¯•å…³è”æŸ¥è¯¢ï¼ˆæŸ¥è¯¢ä¸¤ä¸ªè¡¨ï¼‰
 	 */
 	@Test
 	public void testFindPostById(){

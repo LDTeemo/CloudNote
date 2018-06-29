@@ -32,7 +32,7 @@
           <element id="library" level="project" name="Maven: org.aspectj:aspectjweaver:1.5.4" />
           <element id="library" level="project" name="Maven: org.apache.tomcat.embed:tomcat-embed-core:8.5.29" />
           <element id="library" level="project" name="Maven: org.apache.tomcat:tomcat-annotations-api:8.5.29" />
-          <element id="library" level="project" name="Maven: org.projectlombok:lombok:unknown" />
+          <element id="library" level="project" name="Maven: org.projectlombok:lombok:1.16.20" />
         </element>
       </element>
       <element id="directory" name="META-INF">
